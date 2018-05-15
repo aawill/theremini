@@ -4,7 +4,6 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script>
 $(document).ready(function(){
-	volume.gain.value=0.0;
     $("#soundBut").click(function(){
    		if (volume.gain.value==0.0) {
         	volume.gain.value=0.2;            
@@ -38,6 +37,7 @@ sineC.type = "sine";
 sineC.start();
 sineC.connect(filter);
 
+volume.gain.value=0.0;
 </script>
 </head>
 <body>
