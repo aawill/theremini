@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+	volume.gain.value=0.0;
+    $("#soundBut").click(function(){
+   		if (volume.gain.value==0.0) {
+        	volume.gain.value=0.2;            
+        }
+        else {
+        	volume.gain.value=0.0;           
+        }
+    });
+});
+var audioCtx = new (window.AudioContext || window.webkitAudioContext);
+var volume = audioCtx.createGain();
+volume.connect(audioCtx.destination);
+var filter = audioCtx.createBiquadFilter();
+filter.connect(volume);
+filter.type = "lowpass";
+filter.frequency.value = 350;
+
+var sineA = audioCtx.createOscillator();
+sineA.frequency.value = 440;
+sineA.type = "sine";
+sineA.start();
+sineA.connect(filter);
+var sineB = audioCtx.createOscillator();
+sineB.frequency.value = 880;
+sineB.type = "sine";
+sineB.start();
+sineB.connect(filter);
+var sineC = audioCtx.createOscillator();
+sineC.frequency.value = 659.3;
+sineC.type = "sine";
+sineC.start();
+sineC.connect(filter);
+
+</script>
+</head>
+<body>
+
+<button id="soundBut">Toggle sound</button>
+
+</body>
+</html>
