@@ -2,17 +2,120 @@
 <html>
 <head>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<style>
+.dropbtn {
+	background-color: #3498DB;
+    color: white;
+    padding: 12px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+}
+.dropbtn:hover, .dropbtn:focus {
+	background-color: #2980B9;
+}
+.dropdown {
+	position: relative;
+    display: inline-block;
+}
+.dropdown-content {
+	display: none;
+    position: absolute;
+    background-color: #f1f1f1;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+.dropdown-content a {
+	color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+    
+.button {
+    background-color: #4CAF50; /* Green */
+    border: none;
+    cursor: pointer;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+}
+    
+.button:hover, .button:focus {
+    background-color: #229722;
+}
+
+.dropdown-content a:hover {background-color: #ddd}
+
+.show {display:block;}
+</style>
 <script>
 $(document).ready(function(){
+    volume.gain.value=0.0;
     $("#soundBut").click(function(){
-	    	audioCtx.resume();
+        audioCtx.resume();
    		if (volume.gain.value==0.0) {
-        	volume.gain.value=0.2;            
+        	volume.gain.value=0.4;            
         }
         else {
         	volume.gain.value=0.0;           
         }
     });
+    $("#sineBut1").click(function(){
+        //alert('sine');
+        waveShape = "sine";
+        sineA.type = "sine";
+    });
+    $("#squareBut1").click(function(){
+        waveShape = "square";
+        sineA.type = "square";
+    });
+    $("#sawBut1").click(function(){
+        waveShape = "sawtooth";
+        sineA.type = "sawtooth";
+    });
+    $("#sineBut2").click(function(){
+        //alert('sine');
+        waveShape = "sine";
+        sineB.type = "sine";
+    });
+    $("#squareBut2").click(function(){
+        waveShape = "square";
+        sineB.type = "square";
+    });
+    $("#sawBut2").click(function(){
+        waveShape = "sawtooth";
+        sineB.type = "sawtooth";
+    });
+    $("#sineBut3").click(function(){
+        //alert('sine');
+        waveShape = "sine";
+        sineC.type = "sine";
+    });
+    $("#squareBut3").click(function(){
+        waveShape = "square";
+        sineC.type = "square";
+    });
+    $("#sawBut3").click(function(){
+        waveShape = "sawtooth";
+        sineC.type = "sawtooth";
+    });
+    window.onclick = function(event) {
+    if (!event.target.matches('.dropbtn')) {
+        var dropdowns = document.getElementsByClassName("dropdown-content");
+        var i;
+        for (i = 0; i < dropdowns.length; i++) {
+            var openDropDown = dropdowns[i];
+            if (openDropDown.classList.contains('show')) {
+                openDropDown.classList.remove('show');
+            }
+        }
+    }
+}
 });
 var audioCtx = new (window.AudioContext || window.webkitAudioContext);
 var volume = audioCtx.createGain();
@@ -20,10 +123,10 @@ volume.connect(audioCtx.destination);
 var filter = audioCtx.createBiquadFilter();
 filter.connect(volume);
 filter.type = "lowpass";
-filter.frequency.value = 350;
+filter.frequency.value = 20000;
 
 var sineA = audioCtx.createOscillator();
-sineA.frequency.value = 440;
+sineA.frequency.value = 220;
 sineA.type = "sine";
 sineA.start();
 sineA.connect(filter);
@@ -37,12 +140,53 @@ sineC.frequency.value = 659.3;
 sineC.type = "sine";
 sineC.start();
 sineC.connect(filter);
-volume.gain.value=0.0;
+
+function showMenu() {
+    document.getElementById("myDropDown").classList.toggle("show");
+}
+function showMenu2() {
+    document.getElementById("myDropDown2").classList.toggle("show");
+}
+function showMenu3() {
+    document.getElementById("myDropDown3").classList.toggle("show");
+}    
+    
 </script>
 </head>
 <body>
-<h2>Simple instrument</h2>
-<button id="soundBut">Toggle sound</button>
+<button id="soundBut" class="button">Toggle sound</button>
+<br/>
+<br/>
+<div class="dropdown">
+	<button onclick="showMenu()" class="dropbtn">Select osc1 waveshape</button>
+    <div id="myDropDown" class="dropdown-content">
+    	<button id="sineBut1">Sine</button>
+        <br/>
+        <button id="squareBut1">Square</button>
+        <br/>
+        <button id="sawBut1">Sawtooth</button>
+    </div>
+</div>
+<div class="dropdown">
+<button onclick="showMenu2()" class="dropbtn">Select osc2 waveshape</button>
+    <div id="myDropDown2" class="dropdown-content">
+    	<button id="sineBut2">Sine</button>
+        <br/>
+        <button id="squareBut2">Square</button>
+        <br/>
+        <button id="sawBut2">Sawtooth</button>
+    </div>    
+</div>
+<div class="dropdown">
+<button onclick="showMenu3()" class="dropbtn">Select osc3 waveshape</button>
+    <div id="myDropDown3" class="dropdown-content">
+    	<button id="sineBut3">Sine</button>
+        <br/>
+        <button id="squareBut3">Square</button>
+        <br/>
+        <button id="sawBut3">Sawtooth</button>
+    </div>
+</div>
 
 </body>
 </html>
