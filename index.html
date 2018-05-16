@@ -1,122 +1,17 @@
 <!DOCTYPE html>
 <html>
 <head>
+<title>Theremini</title>
+<meta charset="utf-8"> 
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
 <style>
-.dropbtn {
-	background-color: #3498DB;
-    color: white;
-    padding: 12px;
-    font-size: 16px;
-    border: none;
-    cursor: pointer;
-}
-.dropbtn:hover, .dropbtn:focus {
-	background-color: #2980B9;
-}
-.dropdown {
-	position: relative;
-    display: inline-block;
-}
-.dropdown-content {
-	display: none;
-    position: absolute;
-    background-color: #f1f1f1;
-    min-width: 160px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    z-index: 1;
-}
-.dropdown-content a {
-	color: black;
-    padding: 12px 16px;
-    text-decoration: none;
-    display: block;
-}
-    
-.button {
-    background-color: #4CAF50; /* Green */
-    border: none;
-    cursor: pointer;
-    color: white;
-    padding: 15px 32px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-}
-    
-.button:hover, .button:focus {
-    background-color: #229722;
-}
 
-.dropdown-content a:hover {background-color: #ddd}
-
-.show {display:block;}
 </style>
 <script>
-$(document).ready(function(){
-    volume.gain.value=0.0;
-    $("#soundBut").click(function(){
-        audioCtx.resume();
-   		if (volume.gain.value==0.0) {
-        	volume.gain.value=0.4;            
-        }
-        else {
-        	volume.gain.value=0.0;           
-        }
-    });
-    $("#sineBut1").click(function(){
-        //alert('sine');
-        waveShape = "sine";
-        sineA.type = "sine";
-    });
-    $("#squareBut1").click(function(){
-        waveShape = "square";
-        sineA.type = "square";
-    });
-    $("#sawBut1").click(function(){
-        waveShape = "sawtooth";
-        sineA.type = "sawtooth";
-    });
-    $("#sineBut2").click(function(){
-        //alert('sine');
-        waveShape = "sine";
-        sineB.type = "sine";
-    });
-    $("#squareBut2").click(function(){
-        waveShape = "square";
-        sineB.type = "square";
-    });
-    $("#sawBut2").click(function(){
-        waveShape = "sawtooth";
-        sineB.type = "sawtooth";
-    });
-    $("#sineBut3").click(function(){
-        //alert('sine');
-        waveShape = "sine";
-        sineC.type = "sine";
-    });
-    $("#squareBut3").click(function(){
-        waveShape = "square";
-        sineC.type = "square";
-    });
-    $("#sawBut3").click(function(){
-        waveShape = "sawtooth";
-        sineC.type = "sawtooth";
-    });
-    window.onclick = function(event) {
-    if (!event.target.matches('.dropbtn')) {
-        var dropdowns = document.getElementsByClassName("dropdown-content");
-        var i;
-        for (i = 0; i < dropdowns.length; i++) {
-            var openDropDown = dropdowns[i];
-            if (openDropDown.classList.contains('show')) {
-                openDropDown.classList.remove('show');
-            }
-        }
-    }
-}
-});
 var audioCtx = new (window.AudioContext || window.webkitAudioContext);
 var volume = audioCtx.createGain();
 volume.connect(audioCtx.destination);
@@ -125,67 +20,89 @@ filter.connect(volume);
 filter.type = "lowpass";
 filter.frequency.value = 20000;
 
-var sineA = audioCtx.createOscillator();
-sineA.frequency.value = 220;
-sineA.type = "sine";
-sineA.start();
-sineA.connect(filter);
-var sineB = audioCtx.createOscillator();
-sineB.frequency.value = 880;
-sineB.type = "sine";
-sineB.start();
-sineB.connect(filter);
-var sineC = audioCtx.createOscillator();
-sineC.frequency.value = 659.3;
-sineC.type = "sine";
-sineC.start();
-sineC.connect(filter);
-
-function showMenu() {
-    document.getElementById("myDropDown").classList.toggle("show");
-}
-function showMenu2() {
-    document.getElementById("myDropDown2").classList.toggle("show");
-}
-function showMenu3() {
-    document.getElementById("myDropDown3").classList.toggle("show");
+var osc1 = audioCtx.createOscillator();
+osc1.frequency.value = 220;
+osc1.type = "sine";
+osc1.start();
+osc1.connect(filter);
+var osc2 = audioCtx.createOscillator();
+osc2.frequency.value = 880;
+osc2.type = "sine";
+osc2.start();
+osc2.connect(filter);
+var osc3 = audioCtx.createOscillator();
+osc3.frequency.value = 659.3;
+osc3.type = "sine";
+osc3.start();
+osc3.connect(filter);
+volume.gain.value=0.0;
+ 
+function makeSine(button) {
+    var oscName = button.parentElement.parentElement.getAttribute('id');
+    if (oscName == "osc1Menu") osc1.type = "sine";
+    else if (oscName == "osc2Menu") osc2.type = "sine";
+    else if (oscName == "osc3Menu") osc3.type = "sine";
 }    
-    
+function makeSquare(button) {
+    var oscName = button.parentElement.parentElement.getAttribute('id');
+    if (oscName == "osc1Menu") osc1.type = "square";
+    else if (oscName == "osc2Menu") osc2.type = "square";
+    else if (oscName == "osc3Menu") osc3.type = "square";
+}
+function makeSaw(button) {
+    var oscName = button.parentElement.parentElement.getAttribute('id');
+    if (oscName == "osc1Menu") osc1.type = "sawtooth";
+    else if (oscName == "osc2Menu") osc2.type = "sawtooth";
+    else if (oscName == "osc3Menu") osc3.type = "sawtooth";
+}
+function toggleSound() {
+    audioCtx.resume();
+   	if (volume.gain.value==0.0) {
+        volume.gain.value=0.4;            
+    }
+    else {
+        volume.gain.value=0.0;           
+    }
+}
 </script>
 </head>
 <body>
-<button id="soundBut" class="button">Toggle sound</button>
+<h3>Simple Synthesizer</h3>
+<button id="soundBut" class="btn btn-success" onclick="toggleSound()">Toggle sound</button>
 <br/>
 <br/>
-<div class="dropdown">
-	<button onclick="showMenu()" class="dropbtn">Select osc1 waveshape</button>
-    <div id="myDropDown" class="dropdown-content">
-    	<button id="sineBut1">Sine</button>
-        <br/>
-        <button id="squareBut1">Square</button>
-        <br/>
-        <button id="sawBut1">Sawtooth</button>
-    </div>
+<h5>Select waveshape:</h5>
+<div class="btn-group">
+<div class="dropdown" id="osc1Menu">
+  <button class="btn btn-primary dropdown-toggle" type="button" id="osc1Drop" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+  Osc1
+  </button>
+  <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
+    <button id="sineBut1" class="dropdown-item" type="button" onclick="makeSine(this)">Sine</button>
+    <button id="squareBut1" class="dropdown-item" type="button" onclick="makeSquare(this)">Square</button>
+    <button id="sawBut1" class="dropdown-item" type="button" onclick="makeSaw(this)">Sawtooth</button>
+  </div>
 </div>
-<div class="dropdown">
-<button onclick="showMenu2()" class="dropbtn">Select osc2 waveshape</button>
-    <div id="myDropDown2" class="dropdown-content">
-    	<button id="sineBut2">Sine</button>
-        <br/>
-        <button id="squareBut2">Square</button>
-        <br/>
-        <button id="sawBut2">Sawtooth</button>
-    </div>    
+<div class="dropdown" id="osc2Menu">
+  <button class="btn btn-primary dropdown-toggle" type="button" id="osc2Drop" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+  Osc2
+  </button>
+  <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
+    <button id="sineBut2" class="dropdown-item" type="button" onclick="makeSine(this)">Sine</button>
+    <button id="squareBut2" class="dropdown-item" type="button" onclick="makeSquare(this)">Square</button>
+    <button id="sawBut2" class="dropdown-item" type="button" onclick="makeSaw(this)">Sawtooth</button>
+  </div>
 </div>
-<div class="dropdown">
-<button onclick="showMenu3()" class="dropbtn">Select osc3 waveshape</button>
-    <div id="myDropDown3" class="dropdown-content">
-    	<button id="sineBut3">Sine</button>
-        <br/>
-        <button id="squareBut3">Square</button>
-        <br/>
-        <button id="sawBut3">Sawtooth</button>
-    </div>
+<div class="dropdown" id="osc3Menu">
+  <button class="btn btn-primary dropdown-toggle" type="button" id="osc3Drop" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+  Osc3
+  </button>
+  <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
+    <button id="sineBut3" class="dropdown-item" type="button" onclick="makeSine(this)">Sine</button>
+    <button id="squareBut3" class="dropdown-item" type="button" onclick="makeSquare(this)">Square</button>
+    <button id="sawBut3" class="dropdown-item" type="button" onclick="makeSaw(this)">Sawtooth</button>
+  </div>
+</div>
 </div>
 
 	
