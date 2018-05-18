@@ -8,10 +8,77 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+</head>
+<body>
 <style>
-
+input[type=range][orient=vertical] {
+    -webkit-appearance: slider-vertical; /* WebKit */
+    width: 8px;
+    height: 175px;
+    padding: 0 5px;
+}
+.oscMenu {
+    position: relative;
+    text-align: center;
+}
+.dropdown-toggle {
+    margin-bottom: 10px;
+}
 </style>
+
 <script>
+$(document).ready(function() {
+    $("#freqLabel1").html(Math.trunc(osc1Freq));
+    $("#freqLabel2").html(Math.trunc(osc2Freq));
+    $("#freqLabel3").html(Math.trunc(osc3Freq));
+    $("#soundBut").click(function() {
+        audioCtx.resume();
+        if ($(this).hasClass("active")) {
+            stopOscs();
+            $(this).removeClass("active");
+        }
+        else {
+            playOscs();
+            $(this).addClass("active");
+        }
+    });
+    $(".osc1Shape").click(function() {
+        osc1Shape = this.name;
+        osc1.type = osc1Shape;
+        $("#shape1").text($(this).text());
+    });
+    $(".osc2Shape").click(function() {
+        osc2Shape = this.name;
+        osc2.type = osc2Shape;
+        $("#shape2").text($(this).text());
+    });
+    $(".osc3Shape").click(function() {
+        osc3Shape = this.name;
+        osc3.type = osc3Shape;
+        $("#shape3").text($(this).text());
+    });
+    $("#freqSlider1").on("input", function(){
+        $("#freqLabel1").html(this.value);
+        osc1Freq = this.value;
+        osc1.frequency.value = osc1Freq;
+    });
+    $("#freqSlider2").on("input", function(){
+        $("#freqLabel2").html(this.value);
+        osc2Freq = this.value;
+        osc2.frequency.value = osc2Freq;
+    });
+    $("#freqSlider3").on("input", function(){
+        $("#freqLabel3").html(this.value);
+        osc3Freq = this.value;
+        osc3.frequency.value = osc3Freq;
+    });
+    
+});
+var freq = 220;
+var osc1Freq = freq; 
+var osc2Freq = freq * Math.pow(Math.pow(2, (1/12)), 7); 
+var osc3Freq = freq * 2;
+var osc1Shape = "sine", osc2Shape = "sine", osc3Shape = "sine";
 var audioCtx = new (window.AudioContext || window.webkitAudioContext);
 var volume = audioCtx.createGain();
 volume.connect(audioCtx.destination);
@@ -19,91 +86,88 @@ var filter = audioCtx.createBiquadFilter();
 filter.connect(volume);
 filter.type = "lowpass";
 filter.frequency.value = 20000;
-
-var osc1 = audioCtx.createOscillator();
-osc1.frequency.value = 220;
-osc1.type = "sine";
-osc1.start();
-osc1.connect(filter);
-var osc2 = audioCtx.createOscillator();
-osc2.frequency.value = 880;
-osc2.type = "sine";
-osc2.start();
-osc2.connect(filter);
-var osc3 = audioCtx.createOscillator();
-osc3.frequency.value = 659.3;
-osc3.type = "sine";
-osc3.start();
-osc3.connect(filter);
-volume.gain.value=0.0;
  
-function makeSine(button) {
-    var oscName = button.parentElement.parentElement.getAttribute('id');
-    if (oscName == "osc1Menu") osc1.type = "sine";
-    else if (oscName == "osc2Menu") osc2.type = "sine";
-    else if (oscName == "osc3Menu") osc3.type = "sine";
+var osc1, osc2, osc3;    
+
+function playOscs() {
+    osc1 = audioCtx.createOscillator();
+    osc1.frequency.value = osc1Freq;
+    osc1.type = osc1Shape;
+    osc1.connect(filter);
+    osc2 = audioCtx.createOscillator();
+    osc2.frequency.value = osc2Freq;
+    osc2.type = osc2Shape;
+    osc2.connect(filter);
+    osc3 = audioCtx.createOscillator();
+    osc3.frequency.value = osc3Freq;
+    osc3.type = osc3Shape;
+    osc3.connect(filter);
+    osc1.start();
+    osc2.start();
+    osc3.start();
+}
+    
+function stopOscs() {
+    osc1.stop();
+    osc2.stop();
+    osc3.stop();
 }    
-function makeSquare(button) {
-    var oscName = button.parentElement.parentElement.getAttribute('id');
-    if (oscName == "osc1Menu") osc1.type = "square";
-    else if (oscName == "osc2Menu") osc2.type = "square";
-    else if (oscName == "osc3Menu") osc3.type = "square";
-}
-function makeSaw(button) {
-    var oscName = button.parentElement.parentElement.getAttribute('id');
-    if (oscName == "osc1Menu") osc1.type = "sawtooth";
-    else if (oscName == "osc2Menu") osc2.type = "sawtooth";
-    else if (oscName == "osc3Menu") osc3.type = "sawtooth";
-}
-function toggleSound() {
-    audioCtx.resume();
-   	if (volume.gain.value==0.0) {
-        volume.gain.value=0.4;            
-    }
-    else {
-        volume.gain.value=0.0;           
-    }
-}
+
 </script>
-</head>
-<body>
-<h3>Simple Synthesizer</h3>
-<button id="soundBut" class="btn btn-success" onclick="toggleSound()">Toggle sound</button>
+<br/>
+<h3 class="text-center">Simple Synthesizer</h3>
+<div class="row justify-content-center">
+<button id="soundBut" class="btn btn-success">Toggle sound</button>
+</div>
 <br/>
 <br/>
-<h5>Select waveshape:</h5>
-<div class="btn-group">
-<div class="dropdown" id="osc1Menu">
-  <button class="btn btn-primary dropdown-toggle" type="button" id="osc1Drop" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-  Osc1
+<div class="row justify-content-center">
+<div class="dropdown oscMenu col-sm-3 col-md-2 col-lg-2">
+  <h5 class="text-center">Oscillator 1</h5>
+  <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+  <span id="shape1">Wave shape</span>
   </button>
-  <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
-    <button id="sineBut1" class="dropdown-item" type="button" onclick="makeSine(this)">Sine</button>
-    <button id="squareBut1" class="dropdown-item" type="button" onclick="makeSquare(this)">Square</button>
-    <button id="sawBut1" class="dropdown-item" type="button" onclick="makeSaw(this)">Sawtooth</button>
+  <div class="dropdown-menu">
+    <button class="dropdown-item osc1Shape" type="button" name="sine">Sine</button>
+    <button class="dropdown-item osc1Shape" type="button" name="square">Square</button>
+    <button class="dropdown-item osc1Shape" type="button" name="sawtooth">Sawtooth</button>
+  </div>
+  <div>
+  <input type="range" id ="freqSlider1" class="freqSlider" min="20" max="20000" value="220" class="vertical" orient="vertical"/>
+  <p>Frequency: <span id="freqLabel1"></span></p>
+  </div>
+  <hr style='border: none; clear: both'>
+</div>
+<div class="dropdown oscMenu col-sm-3 col-md-2 col-lg-2">
+  <h5 class="text-center">Oscillator 2</h5>
+  <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+  <span id="shape2">Wave shape</span>
+  </button>
+  <div class="dropdown-menu">
+    <button class="dropdown-item osc2Shape" type="button" name="sine">Sine</button>
+    <button class="dropdown-item osc2Shape" type="button" name="square">Square</button>
+    <button class="dropdown-item osc2Shape" type="button" name="sawtooth">Sawtooth</button>
+  </div>
+  <div>
+  <input type="range" id ="freqSlider2" class="freqSlider" min="20" max="20000" value="220" class="vertical" orient="vertical"/>
+  <p>Frequency: <span id="freqLabel2"></span></p>
   </div>
 </div>
-<div class="dropdown" id="osc2Menu">
-  <button class="btn btn-primary dropdown-toggle" type="button" id="osc2Drop" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-  Osc2
+<div class="dropdown oscMenu col-sm-3 col-md-2 col-lg-2">
+  <h5 class="text-center">Oscillator 3</h5>
+  <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+  <span id="shape3">Wave shape</span>
   </button>
-  <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
-    <button id="sineBut2" class="dropdown-item" type="button" onclick="makeSine(this)">Sine</button>
-    <button id="squareBut2" class="dropdown-item" type="button" onclick="makeSquare(this)">Square</button>
-    <button id="sawBut2" class="dropdown-item" type="button" onclick="makeSaw(this)">Sawtooth</button>
+  <div class="dropdown-menu">
+    <button class="dropdown-item osc3Shape" type="button" name="sine">Sine</button>
+    <button class="dropdown-item osc3Shape" type="button" name="square">Square</button>
+    <button class="dropdown-item osc3Shape" type="button" name="sawtooth">Sawtooth</button>
   </div>
-</div>
-<div class="dropdown" id="osc3Menu">
-  <button class="btn btn-primary dropdown-toggle" type="button" id="osc3Drop" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-  Osc3
-  </button>
-  <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
-    <button id="sineBut3" class="dropdown-item" type="button" onclick="makeSine(this)">Sine</button>
-    <button id="squareBut3" class="dropdown-item" type="button" onclick="makeSquare(this)">Square</button>
-    <button id="sawBut3" class="dropdown-item" type="button" onclick="makeSaw(this)">Sawtooth</button>
+  <div>
+  <input type="range" id ="freqSlider3" class="freqSlider" min="20" max="20000" value="220" class="vertical" orient="vertical"/>
+  <p>Frequency: <span id="freqLabel3"></span></p>
   </div>
 </div>
 </div>
-	
 </body>
 </html>

@@ -1,0 +1,4 @@
+-make frequency a typeable box
+-log scale sliders
+-filter bank
+-vca mixer
