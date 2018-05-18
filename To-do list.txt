@@ -2,3 +2,9 @@
 -log scale sliders
 -filter bank
 -vca mixer
+
+
+
+
+to ask:
+-slider position accurate on pageload?

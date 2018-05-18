@@ -28,6 +28,7 @@ input[type=range][orient=vertical] {
 
 <script>
 $(document).ready(function() {
+    initializeAudio(220);
     $("#freqLabel1").html(Math.trunc(osc1Freq));
     $("#freqLabel2").html(Math.trunc(osc2Freq));
     $("#freqLabel3").html(Math.trunc(osc3Freq));
@@ -44,23 +45,31 @@ $(document).ready(function() {
     });
     $(".osc1Shape").click(function() {
         osc1Shape = this.name;
-        osc1.type = osc1Shape;
+        if (typeof osc1 !== "undefined") {
+            osc1.type = osc1Shape;
+        }
         $("#shape1").text($(this).text());
     });
     $(".osc2Shape").click(function() {
         osc2Shape = this.name;
-        osc2.type = osc2Shape;
+        if (typeof osc2 !== "undefined") {
+            osc2.type = osc2Shape;
+        }
         $("#shape2").text($(this).text());
     });
     $(".osc3Shape").click(function() {
         osc3Shape = this.name;
-        osc3.type = osc3Shape;
+        if (typeof osc3 !== "undefined") {
+            osc3.type = osc3Shape;
+        }
         $("#shape3").text($(this).text());
     });
     $("#freqSlider1").on("input", function(){
         $("#freqLabel1").html(this.value);
         osc1Freq = this.value;
-        osc1.frequency.value = osc1Freq;
+        if (typeof osc1 !== "undefined") {
+            osc1.frequency.value = osc1Freq;
+        }
     });
     $("#freqSlider2").on("input", function(){
         $("#freqLabel2").html(this.value);
@@ -73,22 +82,34 @@ $(document).ready(function() {
         osc3.frequency.value = osc3Freq;
     });
     
-});
-var freq = 220;
-var osc1Freq = freq; 
-var osc2Freq = freq * Math.pow(Math.pow(2, (1/12)), 7); 
-var osc3Freq = freq * 2;
-var osc1Shape = "sine", osc2Shape = "sine", osc3Shape = "sine";
-var audioCtx = new (window.AudioContext || window.webkitAudioContext);
-var volume = audioCtx.createGain();
-volume.connect(audioCtx.destination);
-var filter = audioCtx.createBiquadFilter();
-filter.connect(volume);
-filter.type = "lowpass";
-filter.frequency.value = 20000;
- 
-var osc1, osc2, osc3;    
+});  
 
+function initializeAudio(freqIn) {
+    var freq = freqIn;
+    audioCtx = new (window.AudioContext || window.webkitAudioContext);
+    volume = audioCtx.createGain();
+    volume.connect(audioCtx.destination);
+    filter = audioCtx.createBiquadFilter();
+    filter.connect(volume);
+    filter.type = "lowpass";
+    filter.frequency.value = 20000;
+    
+    osc1Freq = freq;
+    osc2Freq = freq * Math.pow(Math.pow(2, (1/12)), 7);
+    osc3Freq = freq * 2;
+    osc1Shape = "sine", osc2Shape = "sine", osc3Shape = "sine";
+    
+    var osc1 = audioCtx.createOscillator();
+    osc1.frequency.value = osc1Freq;
+    osc1.type = osc1Shape;
+    var osc2 = audioCtx.createOscillator();
+    osc2.frequency.value = osc2Freq;
+    osc2.type = osc2Shape;
+    var osc3 = audioCtx.createOscillator();
+    osc3.frequency.value = osc3Freq;
+    osc3.type = osc3Shape;
+}
+    
 function playOscs() {
     osc1 = audioCtx.createOscillator();
     osc1.frequency.value = osc1Freq;
