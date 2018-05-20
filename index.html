@@ -11,19 +11,36 @@
 </head>
 <body>
 <style>
-input[type=range][orient=vertical] {
-    -webkit-appearance: slider-vertical; /* WebKit */
-    width: 8px;
-    height: 175px;
-    padding: 0 5px;
-}
 .oscMenu {
+    position: relative;
+    text-align: center;
+}
+.filterMenu {
     position: relative;
     text-align: center;
 }
 .dropdown-toggle {
     margin-bottom: 10px;
 }
+
+.slider {
+    -webkit-appearance: slider-vertical;
+    width: 8px;
+    height: 175px;
+    padding: 0 5px;
+}
+
+.slider::-webkit-slider-thumb {
+    cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+    width: 25px;
+    height: 25px;
+    background: #4CAF50;
+    cursor: pointer;
+}
+
 </style>
 <script>
 $(document).ready(function() {
@@ -31,9 +48,11 @@ $(document).ready(function() {
     $("#freqLabel1").html(Math.trunc(osc1Freq));
     $("#freqLabel2").html(Math.trunc(osc2Freq));
     $("#freqLabel3").html(Math.trunc(osc3Freq));
+    $("#filterLabel1").html(Math.trunc(filter1Freq));
     $("#freqSlider1").val(logposition(osc1Freq));
     $("#freqSlider2").val(logposition(osc2Freq));
     $("#freqSlider3").val(logposition(osc3Freq));
+    $("#filterSlider1").val(logposition(filter1Freq));
     $("#soundBut").click(function() {
         audioCtx.resume();
         if ($(this).hasClass("active")) {
@@ -66,6 +85,10 @@ $(document).ready(function() {
         }
         $("#shape3").text($(this).text());
     });
+    $(".filter1Type").click(function() {
+        filter1.type = this.name;
+        $("#type1").text($(this).text());
+    })
     $("#freqSlider1").on("input", function() {
         $("#freqLabel1").html(Math.trunc(logslider(this.value)));
         osc1Freq = logslider(this.value);
@@ -87,6 +110,10 @@ $(document).ready(function() {
             osc3.frequency.value = osc3Freq;
         }
     });
+    $("#filterSlider1").on("input", function() {
+        $("#filterLabel1").html(Math.trunc(logslider(this.value)));
+        filter1.frequency.value = logslider(this.value);
+    })
 });  
 
 function logslider(position) {
@@ -96,7 +123,6 @@ function logslider(position) {
     var maxv = Math.log(20000);
 
     var scale = (maxv-minv) / (maxp-minp);
-
     return Math.exp(minv + scale*(position-minp));
 }    
 
@@ -115,10 +141,12 @@ function initializeAudio(freqIn) {
     audioCtx = new (window.AudioContext || window.webkitAudioContext);
     volume = audioCtx.createGain();
     volume.connect(audioCtx.destination);
-    filter = audioCtx.createBiquadFilter();
-    filter.connect(volume);
-    filter.type = "lowpass";
-    filter.frequency.value = 2000;
+    
+    filter1Freq = 20000;
+    filter1 = audioCtx.createBiquadFilter();
+    filter1.connect(volume);
+    filter1.type = "lowpass";
+    filter1.frequency.value = filter1Freq;
     
     osc1Freq = freq;
     osc2Freq = freq * Math.pow(Math.pow(2, (1/12)), 7);
@@ -135,21 +163,20 @@ function initializeAudio(freqIn) {
     osc3.frequency.value = osc3Freq;
     osc3.type = osc3Shape;
 }
-
-    
+  
 function playOscs() {
     osc1 = audioCtx.createOscillator();
     osc1.frequency.value = osc1Freq;
     osc1.type = osc1Shape;
-    osc1.connect(filter);
+    osc1.connect(filter1);
     osc2 = audioCtx.createOscillator();
     osc2.frequency.value = osc2Freq;
     osc2.type = osc2Shape;
-    osc2.connect(filter);
+    osc2.connect(filter1);
     osc3 = audioCtx.createOscillator();
     osc3.frequency.value = osc3Freq;
     osc3.type = osc3Shape;
-    osc3.connect(filter);
+    osc3.connect(filter1);
     osc1.start();
     osc2.start();
     osc3.start();
@@ -170,7 +197,7 @@ function stopOscs() {
 <br/>
 <br/>
 <div class="row justify-content-center">
-<div class="dropdown oscMenu col-sm-3 col-md-2 col-lg-2">
+<div class="dropdown oscMenu col-sm-3 col-md-3 col-lg-2">
   <h5 class="text-center">Oscillator 1</h5>
   <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
   <span id="shape1">Wave shape</span>
@@ -181,12 +208,12 @@ function stopOscs() {
     <button class="dropdown-item osc1Shape" type="button" name="sawtooth">Sawtooth</button>
   </div>
   <div>
-  <input type="range" id ="freqSlider1" class="freqSlider" min="0" max="100" class="vertical" orient="vertical"/>
+  <input type="range" id ="freqSlider1" class="slider freqSlider" min="0" max="100" orient="vertical"/>
   <p>Frequency: <span id="freqLabel1"></span></p>
   </div>
   <hr style='border: none; clear: both'>
 </div>
-<div class="dropdown oscMenu col-sm-3 col-md-2 col-lg-2">
+<div class="dropdown oscMenu col-sm-3 col-md-3 col-lg-2">
   <h5 class="text-center">Oscillator 2</h5>
   <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
   <span id="shape2">Wave shape</span>
@@ -197,11 +224,11 @@ function stopOscs() {
     <button class="dropdown-item osc2Shape" type="button" name="sawtooth">Sawtooth</button>
   </div>
   <div>
-  <input type="range" id ="freqSlider2" class="freqSlider" min="0" max="100" class="vertical" orient="vertical"/>
+  <input type="range" id ="freqSlider2" class="slider vertical freqSlider" min="0" max="100" orient="vertical"/>
   <p>Frequency: <span id="freqLabel2"></span></p>
   </div>
 </div>
-<div class="dropdown oscMenu col-sm-3 col-md-2 col-lg-2">
+<div class="dropdown oscMenu col-sm-3 col-md-3 col-lg-2">
   <h5 class="text-center">Oscillator 3</h5>
   <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
   <span id="shape3">Wave shape</span>
@@ -212,10 +239,27 @@ function stopOscs() {
     <button class="dropdown-item osc3Shape" type="button" name="sawtooth">Sawtooth</button>
   </div>
   <div>
-  <input type="range" id ="freqSlider3" class="freqSlider" min="0" max="100" class="vertical" orient="vertical"/>
+  <input type="range" id ="freqSlider3" class="slider vertical freqSlider" min="0" max="100" orient="vertical"/>
   <p>Frequency: <span id="freqLabel3"></span></p>
   </div>
 </div>
+</div>
+<div class="row justify-content-center">
+  <div class="dropdown filterMenu col-sm-3 col-md-3 col-lg-2">
+    <h5 class="text-center">Filter</h5>
+    <button class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <span id="type1">Filter type</span>
+    </button>
+    <div class="dropdown-menu">
+    <button class="dropdown-item filter1Type" type="button" name="lowpass">Low pass</button>
+    <button class="dropdown-item filter1Type" type="button" name="highpass">High pass</button>
+    <button class="dropdown-item filter1Type" type="button" name="bandpass">Band pass</button>
+  </div>
+  <div>
+  <input type="range" id ="filterSlider1" class="slider vertical filterSlider" min="0" max="100" orient="vertical"/>
+  <p>Cutoff frequnecy: <span id="filterLabel1"></span></p>
+  </div>       
+  </div>
 </div>
 </body>
 </html>
