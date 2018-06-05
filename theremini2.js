@@ -5,7 +5,13 @@ var pubnub = new PubNub({
 
 pubnub.addListener({
     message: function(m) {
+        console.log(m.message);
         $('#received').text(m.message);
+        osc1Shape = m.message.shape;
+        if (typeof osc1 !== "undefined") {
+            osc1.type = osc1Shape;
+        }
+        $("#shape1").text(m.message.text);
     }
 });
 
@@ -23,12 +29,6 @@ $(document).ready(function() {
     $("#freqSlider2").val(logposition(osc2Freq));
     $("#freqSlider3").val(logposition(osc3Freq));
     $("#filterSlider1").val(logposition(filter1Freq));
-    $('#sendMessage').click(function() {
-        pubnub.publish({
-            message: 'hello',
-            channel: 'theremini'
-        });
-    });
     $("#soundBut").click(function() {
         audioCtx.resume();
         if ($(this).hasClass("active")) {

@@ -42,6 +42,10 @@ $(document).ready(function() {
     });
     $(".osc1Shape").click(function() {
         osc1Shape = this.name;
+        pubnub.publish({
+            message: {shape: osc1Shape, text: $(this).text()},
+            channel: 'theremini'
+        });
         if (typeof osc1 !== "undefined") {
             osc1.type = osc1Shape;
         }
