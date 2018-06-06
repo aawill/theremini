@@ -3,95 +3,159 @@ var pubnub = new PubNub({
     publishKey: 'pub-c-1faf5591-4729-4025-8ba1-cf4953039476' 
 });
 
-pubnub.addListener({
+/*pubnub.addListener({
     message: function(m) {
-        console.log(m.message);
+        parseMessage(m.message);
     }
 });
 
 pubnub.subscribe({ 
     channels: ['theremini'],
-});
+});*/
+
+function parseMessage(message) {
+    if (message.type == 'shape') {
+        switch(message.osc) {
+            case 'osc1':
+                osc1Shape = message.shape;
+                $('#shape1').text(message.shape);
+                if (typeof osc1 !== 'undefined') {
+                    osc1.type = osc1Shape;
+                }
+                break;
+            case 'osc2':
+                osc2Shape = message.shape;
+                $('#shape2').text(message.shape);
+                if (typeof osc2 !== 'undefined') {
+                    osc2.type = osc2Shape;
+                }
+                break;
+            case 'osc3':
+                osc3Shape = message.shape;
+                $('#shape3').text(message.shape);
+                if (typeof osc3 !== 'undefined') {
+                    osc3.type = osc3Shape;
+                }
+        }
+    }
+    else if (message.type == 'freq') {
+        switch(message.osc) {
+            case 'osc1':
+                osc1Freq = logslider(message.value);
+                $('#freqLabel1').html(Math.trunc(osc1Freq));
+                $('#freqSlider1').val(logposition(osc1Freq));
+                if (typeof osc1 !== 'undefined') {
+                    osc1.frequency.value = osc1Freq;
+                }
+                break;
+            case 'osc2':
+                osc2Freq = logslider(message.value);
+                $('#freqLabel2').html(Math.trunc(osc2Freq));
+                if (typeof osc2 !== 'undefined') {
+                    osc2.frequency.value = osc2Freq;
+                }
+                break;
+            case 'osc3':
+                osc3Freq = logslider(message.value);
+                $('#freqLabel3').html(Math.trunc(osc3Freq));
+                if (typeof osc3 !== 'undefined') {
+                    osc3.frequency.value = osc3Freq;
+                }
+        }
+    }
+}
 
 $(document).ready(function() {
     initializeAudio(220);
-    $("#freqLabel1").html(Math.trunc(osc1Freq));
-    $("#freqLabel2").html(Math.trunc(osc2Freq));
-    $("#freqLabel3").html(Math.trunc(osc3Freq));
-    $("#filterLabel1").html(Math.trunc(filter1Freq));
-    $("#freqSlider1").val(logposition(osc1Freq));
-    $("#freqSlider2").val(logposition(osc2Freq));
-    $("#freqSlider3").val(logposition(osc3Freq));
-    $("#filterSlider1").val(logposition(filter1Freq));
-    $('#sendMessage').click(function() {
-        pubnub.publish({
-            message: 'hello',
-            channel: 'theremini'
-        });
-    });
-    $("#soundBut").click(function() {
+    $('#freqLabel1').html(Math.trunc(osc1Freq));
+    $('#freqLabel2').html(Math.trunc(osc2Freq));
+    $('#freqLabel3').html(Math.trunc(osc3Freq));
+    $('#filterLabel1').html(Math.trunc(filter1Freq));
+    $('#freqSlider1').val(logposition(osc1Freq));
+    $('#freqSlider2').val(logposition(osc2Freq));
+    $('#freqSlider3').val(logposition(osc3Freq));
+    $('#filterSlider1').val(logposition(filter1Freq));
+    $('#soundBut').click(function() {
         audioCtx.resume();
-        if ($(this).hasClass("active")) {
+        if ($(this).hasClass('active')) {
             stopOscs();
-            $(this).removeClass("active");
+            $(this).removeClass('active');
         }
         else {
             playOscs();
-            $(this).addClass("active");
+            $(this).addClass('active');
         }
     });
-    $(".osc1Shape").click(function() {
-        osc1Shape = this.name;
-        pubnub.publish({
-            message: {shape: osc1Shape, text: $(this).text()},
+    $('.oscShape').click(function() {
+        switch(this.name) {
+            case 'osc1':
+                osc1Shape = $(this).text().toLowerCase();
+                $('#shape1').text($(this).text());
+                if (typeof osc1 !== 'undefined') {
+                    osc1.type = osc1Shape;
+                }
+                break;
+            case 'osc2':
+                osc2Shape = $(this).text().toLowerCase();
+                $('#shape2').text($(this).text());
+                if (typeof osc2 !== 'undefined') {
+                    osc2.type = osc2Shape;
+                }
+                break;
+            case 'osc3':
+                osc3Shape = $(this).text().toLowerCase();
+                $('#shape3').text($(this).text());
+                if (typeof osc3 !== 'undefined') {
+                    osc3.type = osc3Shape;
+                }
+        }
+        /*pubnub.publish({
+            message: {
+                type: 'shape',
+                osc: this.name, 
+                shape: $(this).text()
+            },
             channel: 'theremini'
-        });
-        if (typeof osc1 !== "undefined") {
-            osc1.type = osc1Shape;
-        }
-        $("#shape1").text($(this).text());
+        });*/
     });
-    $(".osc2Shape").click(function() {
-        osc2Shape = this.name;
-        if (typeof osc2 !== "undefined") {
-            osc2.type = osc2Shape;
+    $('.freqSlider').on('input', function() {
+        switch(this.name) {
+            case 'osc1':
+                osc1Freq = logslider(this.value);
+                $('#freqLabel1').html(Math.trunc(osc1Freq));
+                if (typeof osc1 !== 'undefined') {
+                    osc1.frequency.value = osc1Freq;
+                }
+                break;
+            case 'osc2':
+                osc2Freq = logslider(this.value);
+                $('#freqLabel2').html(Math.trunc(osc2Freq));
+                if (typeof osc2 !== 'undefined') {
+                    osc2.frequency.value = osc2Freq;
+                }
+                break;
+            case 'osc3':
+                osc3Freq = logslider(this.value);
+                $('#freqLabel3').html(Math.trunc(osc3Freq));
+                if (typeof osc3 !== 'undefined') {
+                    osc3.frequency.value = osc3Freq;
+                }
         }
-        $("#shape2").text($(this).text());
+        /*pubnub.publish({
+            message: {
+                type: 'freq',
+                osc: this.name,
+                value: this.value
+            },
+            channel: 'theremini'
+        });*/
     });
-    $(".osc3Shape").click(function() {
-        osc3Shape = this.name;
-        if (typeof osc3 !== "undefined") {
-            osc3.type = osc3Shape;
-        }
-        $("#shape3").text($(this).text());
-    });
-    $(".filter1Type").click(function() {
+    $('.filter1Type').click(function() {
         filter1.type = this.name;
-        $("#type1").text($(this).text());
+        $('#type1').text($(this).text());
     })
-    $("#freqSlider1").on("input", function() {
-        $("#freqLabel1").html(Math.trunc(logslider(this.value)));
-        osc1Freq = logslider(this.value);
-        if (typeof osc1 !== "undefined") {
-            osc1.frequency.value = osc1Freq;
-        }
-    });
-    $("#freqSlider2").on("input", function() {
-        $("#freqLabel2").html(Math.trunc(logslider(this.value)));
-        osc2Freq = logslider(this.value);
-        if (typeof osc2 !== "undefined") {
-            osc2.frequency.value = osc2Freq;
-        }
-    });
-    $("#freqSlider3").on("input", function() {
-        $("#freqLabel3").html(Math.trunc(logslider(this.value)));
-        osc3Freq = logslider(this.value);
-        if (typeof osc3 !== "undefined") {
-            osc3.frequency.value = osc3Freq;
-        }
-    });
-    $("#filterSlider1").on("input", function() {
-        $("#filterLabel1").html(Math.trunc(logslider(this.value)));
+    $('#filterSlider1').on('input', function() {
+        $('#filterLabel1').html(Math.trunc(logslider(this.value)));
         filter1.frequency.value = logslider(this.value);
     })
 });  
@@ -127,13 +191,13 @@ function initializeAudio(freqIn) {
     filter1Freq = 20000;
     filter1 = audioCtx.createBiquadFilter();
     filter1.connect(volume);
-    filter1.type = "lowpass";
+    filter1.type = 'lowpass';
     filter1.frequency.value = filter1Freq;
     
     osc1Freq = freq;
     osc2Freq = freq * Math.pow(Math.pow(2, (1/12)), 7);
     osc3Freq = freq * 2;
-    osc1Shape = "sine", osc2Shape = "sine", osc3Shape = "sine";
+    osc1Shape = 'sine', osc2Shape = 'sine', osc3Shape = 'sine';
     
     var osc1 = audioCtx.createOscillator();
     osc1.frequency.value = osc1Freq;

@@ -13,10 +13,6 @@
 <script type="text/javascript" src="theremini.js"></script>
 </head>
 <body>
-<div class="row justify-content-center">
-<button id="sendMessage" class="btn btn-danger">Send Message</button>
-<a href='https://aawill.github.io/theremini/theremini2'>Click here for player 2</a>
-</div>
 <br/>
 <h3 class="text-center">Simple Synthesizer</h3>
 <div class="row justify-content-center">
@@ -27,47 +23,53 @@
 <div class="row justify-content-center">
 <div class="dropdown oscMenu col-sm-3 col-md-3 col-lg-2">
   <h5 class="text-center">Oscillator 1</h5>
-  <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+  <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown" 
+          aria-haspopup="true" aria-expanded="false">
   <span id="shape1">Wave shape</span>
   </button>
   <div class="dropdown-menu">
-    <button class="dropdown-item osc1Shape" type="button" name="sine">Sine</button>
-    <button class="dropdown-item osc1Shape" type="button" name="square">Square</button>
-    <button class="dropdown-item osc1Shape" type="button" name="sawtooth">Sawtooth</button>
+    <button class="dropdown-item oscShape"name="osc1">Sine</button>
+    <button class="dropdown-item oscShape"name="osc1">Square</button>
+    <button class="dropdown-item oscShape"name="osc1">Sawtooth</button>
   </div>
   <div>
-  <input type="range" id ="freqSlider1" class="slider freqSlider" min="0" max="100" orient="vertical"/>
+  <input type="range" class="slider freqSlider" name="osc1" 
+         min="0" max="100" orient="vertical"/>
   <p>Frequency: <span id="freqLabel1"></span></p>
   </div>
   <hr style='border: none; clear: both'>
 </div>
 <div class="dropdown oscMenu col-sm-3 col-md-3 col-lg-2">
   <h5 class="text-center">Oscillator 2</h5>
-  <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+  <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown" 
+          aria-haspopup="true" aria-expanded="false">
   <span id="shape2">Wave shape</span>
   </button>
   <div class="dropdown-menu">
-    <button class="dropdown-item osc2Shape" type="button" name="sine">Sine</button>
-    <button class="dropdown-item osc2Shape" type="button" name="square">Square</button>
-    <button class="dropdown-item osc2Shape" type="button" name="sawtooth">Sawtooth</button>
+    <button class="dropdown-item oscShape" name="osc2">Sine</button>
+    <button class="dropdown-item oscShape" name="osc2">Square</button>
+    <button class="dropdown-item oscShape" name="osc2">Sawtooth</button>
   </div>
   <div>
-  <input type="range" id ="freqSlider2" class="slider vertical freqSlider" min="0" max="100" orient="vertical"/>
+  <input type="range" class="slider freqSlider" name="osc2" 
+         min="0" max="100" orient="vertical"/>
   <p>Frequency: <span id="freqLabel2"></span></p>
   </div>
 </div>
 <div class="dropdown oscMenu col-sm-3 col-md-3 col-lg-2">
   <h5 class="text-center">Oscillator 3</h5>
-  <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+  <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown" 
+          aria-haspopup="true" aria-expanded="false">
   <span id="shape3">Wave shape</span>
   </button>
   <div class="dropdown-menu">
-    <button class="dropdown-item osc3Shape" type="button" name="sine">Sine</button>
-    <button class="dropdown-item osc3Shape" type="button" name="square">Square</button>
-    <button class="dropdown-item osc3Shape" type="button" name="sawtooth">Sawtooth</button>
+    <button class="dropdown-item oscShape" name="osc3">Sine</button>
+    <button class="dropdown-item oscShape" name="osc3">Square</button>
+    <button class="dropdown-item oscShape" name="osc3">Sawtooth</button>
   </div>
   <div>
-  <input type="range" id ="freqSlider3" class="slider vertical freqSlider" min="0" max="100" orient="vertical"/>
+  <input type="range" class="slider freqSlider" name="osc3" 
+         min="0" max="100" orient="vertical"/>
   <p>Frequency: <span id="freqLabel3"></span></p>
   </div>
 </div>
@@ -75,7 +77,8 @@
 <div class="row justify-content-center">
   <div class="dropdown filterMenu col-sm-3 col-md-3 col-lg-2">
     <h5 class="text-center">Filter</h5>
-    <button class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <button class="btn btn-info dropdown-toggle" data-toggle="dropdown" 
+            aria-haspopup="true" aria-expanded="false">
     <span id="type1">Filter type</span>
     </button>
     <div class="dropdown-menu">
@@ -84,7 +87,8 @@
     <button class="dropdown-item filter1Type" type="button" name="bandpass">Band pass</button>
   </div>
   <div>
-  <input type="range" id ="filterSlider1" class="slider vertical filterSlider" min="0" max="100" orient="vertical"/>
+  <input type="range" id ="filterSlider1" class="slider filterSlider" 
+         min="0" max="100" orient="vertical"/>
   <p>Cutoff frequnecy: <span id="filterLabel1"></span></p>
   </div>       
   </div>
